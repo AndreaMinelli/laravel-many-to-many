@@ -10,7 +10,16 @@
         <p><strong>Repository: <a href="{{ $project->project_link }}">{{ $project->getProjectLink() }}</a></strong></p>
         <p><strong>Pubblicato:</strong> {{ $project->published ? 'Si' : 'No' }}</p>
         <p><strong>Tipo progetto:</strong> {{ $project->type ? $project->type->name : 'N.D.' }}</p>
-        <p><strong>Ultimo Aggiornamento:</strong> {{ $project->updated_at }}</p>
+        <p><strong>Tecnologie:</strong>
+            @forelse ($project->technologies as $technology)
+                {{ $technology->name }} @if (!$loop->last)
+                    ,
+                @endif
+            @empty
+                N.D.
+            @endforelse
+        </p>
+        <p><strong>Ultimo Agg.:</strong> {{ $project->updated_at }}</p>
     </div>
     <div class="d-flex justify-content-center">
         @if ($project->project_img)
