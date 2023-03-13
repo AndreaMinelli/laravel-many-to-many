@@ -123,7 +123,7 @@ class ProjectController extends Controller
         $data['published'] = Arr::exists($data, 'published') ? 1 : 0;
         $project->fill($data);
         $project->save();
-        if (Arr::exists($data, 'technologies')) $project->technologies()->attach($data['technologies']);
+        if (Arr::exists($data, 'technologies')) $project->technologies()->sync($data['technologies']);
         else if (count($project->technologies)) $project->technologies()->detach();
 
         return to_route('admin.projects.show', $project->id)->with('msg', "Il progetto $project->name è stato modificato.")->with('type', 'info');
