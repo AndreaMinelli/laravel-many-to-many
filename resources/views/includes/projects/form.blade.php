@@ -84,6 +84,25 @@
     </div>
 </div>
 
+<div class="col-12 mt-4">
+    <p class="mb-2">Tecnologie utilizzate:</p>
+    @forelse ($technologies as $technology)
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="tech-{{ $technology->id }}"
+                value="{{ $technology->id }}" name="technologies[]"
+                @if (count(old()) && !old('technologies')) @elseif(in_array($technology->id, old('technologies', $project_technologies ?? []))) checked @endif>
+            <label class="form-check-label" for="tech-{{ $technology->id }}">{{ $technology->name }}</label>
+        </div>
+    @empty
+        -
+    @endforelse
+    @error('technologies')
+        <div class="text-danger">
+            {{ $message }}
+        </div>
+    @enderror
+</div>
+
 <div class="text-end mt-5">
     <a class="btn btn-secondary"
         href="@if ($project->exists) {{ route('admin.projects.show', $project->id) }}
