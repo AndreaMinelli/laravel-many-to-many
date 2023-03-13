@@ -71,6 +71,7 @@ class ProjectController extends Controller
         $data['published'] = Arr::exists($data, 'published') ? 1 : 0;
         $project->fill($data);
         $project->save();
+        if (Arr::exists($data, 'technologies')) $project->technologies()->attach($data['technologies']);
 
         return to_route('admin.projects.show', $project->id)->with('msg', "Il progetto $project->name è stato aggiunto correttamente.")->with('type', 'success');
     }
@@ -90,8 +91,8 @@ class ProjectController extends Controller
     {
         $types = Type::all();
         $technologies = Technology::orderBy('name')->get();
-
-        return view('admin.projects.edit', compact('project', 'types', 'technologies'));
+        $project_technologies = $project->technologies->pluck('id')->all();
+        return view('admin.projects.edit', compact('project', 'types', 'technologies', 'project_technologies'));
     }
 
     /**
@@ -122,6 +123,8 @@ class ProjectController extends Controller
         $data['published'] = Arr::exists($data, 'published') ? 1 : 0;
         $project->fill($data);
         $project->save();
+        if (Arr::exists($data, 'technologies')) $project->technologies()->attach($data['technologies']);
+        else if (count($project->technologies)) $project->technologies()->detach();
 
         return to_route('admin.projects.show', $project->id)->with('msg', "Il progetto $project->name è stato modificato.")->with('type', 'info');
     }
