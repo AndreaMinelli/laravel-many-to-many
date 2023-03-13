@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
@@ -35,7 +36,8 @@ class ProjectController extends Controller
     {
         $project = new Project();
         $types = Type::all();
-        return view('admin.projects.create', compact('project', 'types'));
+        $technologies = Technology::orderBy('name')->get();
+        return view('admin.projects.create', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -48,7 +50,8 @@ class ProjectController extends Controller
             'project_img' => 'nullable|image',
             'description' => 'required|string',
             'project_link' => 'required|url',
-            'type_id' => 'nullable|exists:types,id'
+            'type_id' => 'nullable|exists:types,id',
+            'technologies' => 'nullable|exists:technologies,id'
 
         ], [
             'name.required' => 'Devi inserire un nome valido!',
@@ -57,6 +60,7 @@ class ProjectController extends Controller
             'project_link.required' => 'Devi inserire un link valido!',
             'project_link.url' => 'Il link del progetto non è valido.',
             'type_id.exists' => 'Il tipo di progetto inserito non è valido',
+            'technologies.exists' => 'Il tipo di tecnologia inserita non è valido',
 
         ]);
         $data = $request->all();
@@ -85,7 +89,9 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $types = Type::all();
-        return view('admin.projects.edit', compact('project', 'types'));
+        $technologies = Technology::orderBy('name')->get();
+
+        return view('admin.projects.edit', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -98,13 +104,15 @@ class ProjectController extends Controller
             'project_img' => 'nullable|image',
             'description' => 'required|string',
             'project_link' => 'required|url',
-            'type_id' => 'nullable|exists:types,id'
+            'type_id' => 'nullable|exists:types,id',
+            'technologies' => 'nullable|exists:technologies,id'
         ], [
             'name.required' => 'Devi inserire un nome valido!',
             'description.required' => 'Devi inserire una descrizione!',
             'project_img.image' => 'Il file caricato deve essere un\'immagine.',
             'project_link.required' => 'Devi inserire un link valido!',
             'type_id.exists' => 'Il tipo di progetto inserito non è valido',
+            'technologies.exists' => 'Il tipo di tecnologia inserita non è valido',
         ]);
         $data = $request->all();
         if (Arr::exists($data, 'project_img')) {
